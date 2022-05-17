@@ -6,12 +6,14 @@ import requests
 import math
 import qwick3d_importer
 
-license = "62815c6be654d"
-
 class WM_OT_select_model(bpy.types.Operator):
     """"""
     bl_label = "Qwick3d Asset Browser"
     bl_idname = "wm.select_model"
+
+    def __init__(self):
+        qwick3d_importer.setup()
+
     
     model_search : bpy.props.StringProperty(name = "Search",default="")
 #    res : bpy.props.EnumProperty(
@@ -39,9 +41,16 @@ class WM_OT_select_model(bpy.types.Operator):
     
     def invoke(self,context,event):
         #,width=1280
+        qwick3d_importer.setup()
         return context.window_manager.invoke_props_dialog(self,width=800)
     
     def draw(self,context):
+
+        # global qwick3d_importer.models
+
+        # qwick3d_importer.models = qwick3d_importer.get_models("")
+        # print(f"models: {qwick3d_importer.models}")
+
         layout = self.layout
         props = context.scene.DonwloadInfoPropertyGroup
         layout.prop(props, "res")
@@ -55,6 +64,7 @@ class WM_OT_select_model(bpy.types.Operator):
         # print(models)
         index = 0
         columns = 4
+        print(qwick3d_importer.models)
         for i in range(0,int(math.ceil(len(qwick3d_importer.models) / columns))):
             row = layout.row()
             # len(models) - index, min

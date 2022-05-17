@@ -38,8 +38,9 @@ addon_keymaps = []
 preview_collections = {}
 models = []
 
-asset_location = "C:\\Users\\edins\\qwick3d\\assets"
-preview_location = "C:\\Users\\edins\\qwick3d\\previews"
+asset_location = "/home/edin/blender/assets"
+preview_location = "/home/edin/blender/previews"
+license = "62815c6be654d"
 
 def generate_previews(images_location):
     # We are accessing all of the information that we generated in the register function below
@@ -71,18 +72,20 @@ def get_models(keyword):
      # print(in_json['models'][0]['display_name'])
      return result
 
-def register():
-
+def setup():
     global models
-
+    
     models = get_models("")
     print(f"models: {models}")
-    
+
     pcoll = bpy.utils.previews.new()
     images_location = preview_location
     preview_collections["thumbnail_previews_prep"] = pcoll
     preview_collections["thumbnail_previews"] = generate_previews(images_location)
 
+
+def register():
+    
     for c in classes:
         bpy.utils.register_class(c)
 
@@ -95,6 +98,9 @@ def register():
         km = wm.keyconfigs.addon.keymaps.new(name='Object Mode', space_type='EMPTY')
         kmi = km.keymap_items.new(WM_OT_select_model.bl_idname, 'K', 'PRESS', ctrl=False, shift=False)
         addon_keymaps.append((km, kmi))
+
+    # setup()
+    
 
 def unregister():
     for c in classes:
@@ -110,5 +116,5 @@ def unregister():
         km.keymap_items.remove(kmi)
     addon_keymaps.clear()
 
-# if __name__ == "__main__":
-#     register()
+if __name__ == "__main__":
+     setup()

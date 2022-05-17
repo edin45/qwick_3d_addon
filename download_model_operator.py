@@ -20,7 +20,7 @@ class WM_OT_download_model(bpy.types.Operator):
     def execute(self, context):
         props = context.scene.DonwloadInfoPropertyGroup
         print('download')
-        f = urllib.request.urlopen(f"http://localhost/backend/download_model.php?license={license}&model_name={self.model_name}&preferred_resolution={props.res}")
+        f = urllib.request.urlopen(f"http://localhost/backend/download_model.php?license={qwick3d_importer.license}&model_name={self.model_name}&preferred_resolution={props.res}")
         download_url = "http://localhost/backend" + f.read().decode("utf-8")
         print(download_url)
         response = qwick3d_importer.requests.get(download_url)
