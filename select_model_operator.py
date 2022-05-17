@@ -6,7 +6,7 @@ import requests
 import math
 import qwick3d_importer
 
-license = "62815c6be654d";
+license = "62815c6be654d"
 
 class WM_OT_select_model(bpy.types.Operator):
     """"""

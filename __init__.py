@@ -38,8 +38,8 @@ addon_keymaps = []
 preview_collections = {}
 models = []
 
-asset_location = "/home/edin/blender/assets/"
-preview_location = "/home/edin/blender/previews/"
+asset_location = "C:\\Users\\edins\\qwick3d\\assets"
+preview_location = "C:\\Users\\edins\\qwick3d\\previews"
 
 def generate_previews(images_location):
     # We are accessing all of the information that we generated in the register function below
@@ -57,19 +57,19 @@ def generate_previews(images_location):
     return pcoll
 
 def get_models(keyword):
-    if not os.path.exists(preview_location):
-        os.mkdir(preview_location)
+     if not os.path.exists(preview_location):
+         os.mkdir(preview_location)
         
-    f = urllib.request.urlopen(f"http://localhost/backend/get_model_index.php?license={license}")
-    in_json = json.loads(f.read())
-    result = in_json['models']
+     f = urllib.request.urlopen(f"http://localhost/backend/get_model_index.php?license={license}")
+     in_json = json.loads(f.read())
+     result = in_json['models']
     
-    for i in in_json['models']:
-        print(i['display_name'])
-        response = requests.get(f"http://localhost/backend/previews/{i['model_name']}.jpg")
-        open(os.path.join(preview_location, i['model_name'] + ".jpg"), "wb").write(response.content)
-    # print(in_json['models'][0]['display_name'])
-    return result
+     for i in in_json['models']:
+         print(i['display_name'])
+         response = requests.get(f"http://localhost/backend/previews/{i['model_name']}.jpg")
+         open(os.path.join(preview_location, i['model_name'] + ".jpg"), "wb").write(response.content)
+     # print(in_json['models'][0]['display_name'])
+     return result
 
 def register():
 
@@ -110,5 +110,5 @@ def unregister():
         km.keymap_items.remove(kmi)
     addon_keymaps.clear()
 
-if __name__ == "__main__":
-    register()
+# if __name__ == "__main__":
+#     register()
