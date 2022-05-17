@@ -5,18 +5,53 @@ import urllib.request
 import requests
 import math
 
+license = "62815c6be654d";
+
+class DonwloadInfoPropertyGroup(bpy.types.PropertyGroup):
+    res : bpy.props.EnumProperty(
+        name = "res",
+        description = "abc",
+        items=[
+            ('1k','1K','1k'),
+            ('2k','2K','2k'),
+            ('4k','4K','4k'),
+        ],
+        default='4k'
+    )
+
 class WM_OT_download_model(bpy.types.Operator):
     """"""
     bl_label = "model download"
     bl_idname = "wm.download_model"
     
+    model_name : bpy.props.StringProperty(  # bl 2.80 use testint: bpy.props
+        name="model_name",
+        description="",
+        default="",
+        )
+    
 #    def __init__(self, model_name):
 #        self.model_name = model_name
     
     def execute(self, context):
+        props = context.scene.DonwloadInfoPropertyGroup
         print('download')
-        f = urllib.request.urlopen("http://localhost/models/get_model_index.php?license=62815c6be654d")
-        f.read()
+        f = urllib.request.urlopen(f"http://localhost/backend/download_model.php?license={license}&model_name={self.model_name}&preferred_resolution={props.res}")
+        download_url = "http://localhost/backend" + f.read().decode("utf-8")
+        print(download_url)
+        response = requests.get(download_url)
+        
+        result_folder = os.path.join(asset_location, self.model_name + "_" + props.res + ".blend")
+        open(result_folder, "wb").write(response.content)
+        
+        print(result_folder)
+        
+        bpy.ops.wm.append(
+            filepath=os.path.join(result_folder, 'Object', self.model_name),
+            directory=os.path.join(result_folder, 'Object'),
+            filename=self.model_name
+        )
+        
         return {'FINISHED'}
 
 class WM_OT_select_model(bpy.types.Operator):
@@ -25,25 +60,27 @@ class WM_OT_select_model(bpy.types.Operator):
     bl_idname = "wm.select_model"
     
     model_search : bpy.props.StringProperty(name = "Search",default="")
-#    preset_enum : bpy.props.EnumProperty(
-#        name = "",
+#    res : bpy.props.EnumProperty(
+#        name = "resolution",
 #        description = "abc",
 #        items=[
-#            ('1','a','a1'),
-#            ('2','b','b2'),
-#            ('3','c','c3'),
-#        ]
+#            ('1','1K','1k'),
+#            ('2','2K','2k'),
+#            ('3','4K','4k'),
+#        ],
+#        default='3'
 #    )
 
     @classmethod
     def poll(cls,context):
-        obj = context.object
-        if obj is not None:
-            if obj.mode == "OBJECT":
-                return True
-        return False
+#        obj = context.object
+#        if obj is not None:
+#            if obj.mode == "OBJECT":
+#                return True
+        return True
     
     def execute(self, context):
+        print('execute')
         return {'FINISHED'}
     
     def invoke(self,context,event):
@@ -52,8 +89,12 @@ class WM_OT_select_model(bpy.types.Operator):
     
     def draw(self,context):
         layout = self.layout
-        # layout.prop(self, "preset_enum")
+        props = context.scene.DonwloadInfoPropertyGroup
+        layout.prop(props, "res")
+#        layout.prop(self, "res")
         layout.prop(self, "model_search")
+        
+        
         
         # This tells Blender to draw the my_previews window manager object
         # (Which is our preview)
@@ -61,20 +102,18 @@ class WM_OT_select_model(bpy.types.Operator):
         index = 0
         columns = 4
         for i in range(0,int(math.ceil(len(models) / columns))):
-            print(f"loop_1: {i}")
             row = layout.row()
             # len(models) - index, min
             for x in range(index,(index + columns)):
                 if index > len(models) - 1:
                     break
-                print(f"loop_2: {x}")
                 column = row.column()
                 img = preview_collections["thumbnail_previews"][models[index]['model_name'] + '.jpg']
                 # row.template_icon_view(context.scene, "my_thumbnails")
                 
                 button_name = f"Download {models[index]['display_name']}"
                 column.template_icon(icon_value=img.icon_id,scale=10)
-                column.operator("wm.download_model", text = button_name)
+                column.operator("wm.download_model", text = f"{button_name}").model_name = models[index]['model_name']
                 index+=1
             
         # Just a way to access which one is selected
@@ -106,7 +145,7 @@ def get_models(keyword):
     if not os.path.exists(preview_location):
         os.mkdir(preview_location)
         
-    f = urllib.request.urlopen("http://localhost/backend/get_model_index.php?license=62815c6be654d")
+    f = urllib.request.urlopen(f"http://localhost/backend/get_model_index.php?license={license}")
     in_json = json.loads(f.read())
     result = in_json['models']
     
@@ -140,7 +179,10 @@ def register():
     
     bpy.utils.register_class(WM_OT_select_model)
     bpy.utils.register_class(WM_OT_download_model)
+    bpy.utils.register_class(DonwloadInfoPropertyGroup)
     
+    bpy.types.Scene.DonwloadInfoPropertyGroup = bpy.props.PointerProperty(
+            type=DonwloadInfoPropertyGroup)
     # This is an EnumProperty to hold all of the images
     # You really can save it anywhere in bpy.types.*  Just make sure the location makes sense
     #bpy.types.Scene.my_thumbnails = bpy.props.EnumProperty(
@@ -158,6 +200,9 @@ def register():
 def unregister():
     bpy.utils.unregister_class(WM_OT_select_model)
     bpy.utils.unregister_class(WM_OT_download_model)
+    bpy.utils.unregister_class(DonwloadInfoPropertyGroup)
+    del bpy.types.Scene.DonwloadInfoPropertyGroup
+    
     bpy.utils.previews.remove()
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)
