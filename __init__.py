@@ -58,6 +58,7 @@ def generate_previews(images_location):
     return pcoll
 
 def get_models(keyword):
+    #ToDo: Implement model search
      if not os.path.exists(preview_location):
          os.mkdir(preview_location)
         

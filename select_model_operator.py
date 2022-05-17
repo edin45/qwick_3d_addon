@@ -46,6 +46,12 @@ class WM_OT_select_model(bpy.types.Operator):
     
     def draw(self,context):
 
+        # print('draw')
+
+        #ToDo: Implement model search
+
+        qwick3d_importer.models = qwick3d_importer.get_models(self.model_search)
+
         # global qwick3d_importer.models
 
         # qwick3d_importer.models = qwick3d_importer.get_models("")
