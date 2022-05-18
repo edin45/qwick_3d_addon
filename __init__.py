@@ -29,15 +29,18 @@ import json
 import requests
 
 from . select_model_operator import WM_OT_select_model
+from . select_model_operator import WM_OT_previous_page
+from . select_model_operator import WM_OT_next_page
 from . download_model_operator import WM_OT_download_model
 from . download_info_property import DonwloadInfoPropertyGroup
 
-classes = (WM_OT_select_model,WM_OT_download_model,DonwloadInfoPropertyGroup)
+classes = (WM_OT_select_model,WM_OT_download_model,DonwloadInfoPropertyGroup,WM_OT_previous_page,WM_OT_next_page)
 
 addon_keymaps = []
 preview_collections = {}
 models = []
 disp_models = []
+temp_search_array = []
 
 asset_location = "/home/edin/blender/assets"
 preview_location = "/home/edin/blender/previews"
@@ -75,7 +78,7 @@ def get_models():
      return result
 
 def fill_disp_models(start,count,keyword):
-    global disp_models
+    global disp_models,temp_search_array
     disp_models = []
     temp_search_array = []
     if keyword != "":
