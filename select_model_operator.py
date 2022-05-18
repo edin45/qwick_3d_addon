@@ -15,7 +15,7 @@ class WM_OT_select_model(bpy.types.Operator):
         qwick3d_importer.setup()
 
     
-    model_search : bpy.props.StringProperty(name = "Search",default="")
+    model_search : bpy.props.StringProperty(name = "Search (Press enter to search)",default="",options={'TEXTEDIT_UPDATE'})
 #    res : bpy.props.EnumProperty(
 #        name = "resolution",
 #        description = "abc",
@@ -26,6 +26,10 @@ class WM_OT_select_model(bpy.types.Operator):
 #        ],
 #        default='3'
 #    )
+
+    # for pagination
+    start = 0
+    end = 10
 
     @classmethod
     def poll(cls,context):
@@ -46,11 +50,12 @@ class WM_OT_select_model(bpy.types.Operator):
     
     def draw(self,context):
 
-        # print('draw')
+        print('draw')
 
         #ToDo: Implement model search
 
-        qwick3d_importer.models = qwick3d_importer.get_models(self.model_search)
+        #qwick3d_importer.models = qwick3d_importer.get_models(self.model_search)
+        qwick3d_importer.fill_disp_models(self.start,self.end,self.model_search)
 
         # global qwick3d_importer.models
 
@@ -70,18 +75,18 @@ class WM_OT_select_model(bpy.types.Operator):
         # print(models)
         index = 0
         columns = 4
-        print(qwick3d_importer.models)
-        for i in range(0,int(math.ceil(len(qwick3d_importer.models) / columns))):
+        print(qwick3d_importer.disp_models)
+        for i in range(0,int(math.ceil(len(qwick3d_importer.disp_models) / columns))):
             row = layout.row()
             # len(models) - index, min
             for x in range(index,(index + columns)):
-                if index > len(qwick3d_importer.models) - 1:
+                if index > len(qwick3d_importer.disp_models) - 1:
                     break
                 column = row.column()
-                img = qwick3d_importer.preview_collections["thumbnail_previews"][qwick3d_importer.models[index]['model_name'] + '.jpg']
+                img = qwick3d_importer.preview_collections["thumbnail_previews"][qwick3d_importer.disp_models[index]['model_name'] + '.jpg']
                 # row.template_icon_view(context.scene, "my_thumbnails")
                 
-                button_name = f"Download {qwick3d_importer.models[index]['display_name']}"
+                button_name = f"Download {qwick3d_importer.disp_models[index]['display_name']}"
                 column.template_icon(icon_value=img.icon_id,scale=10)
-                column.operator("wm.download_model", text = f"{button_name}").model_name = qwick3d_importer.models[index]['model_name']
+                column.operator("wm.download_model", text = f"{button_name}").model_name = qwick3d_importer.disp_models[index]['model_name']
                 index+=1

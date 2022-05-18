@@ -37,6 +37,7 @@ classes = (WM_OT_select_model,WM_OT_download_model,DonwloadInfoPropertyGroup)
 addon_keymaps = []
 preview_collections = {}
 models = []
+disp_models = []
 
 asset_location = "/home/edin/blender/assets"
 preview_location = "/home/edin/blender/previews"
@@ -57,7 +58,7 @@ def generate_previews(images_location):
             index+=1
     return pcoll
 
-def get_models(keyword):
+def get_models():
     #ToDo: Implement model search
      if not os.path.exists(preview_location):
          os.mkdir(preview_location)
@@ -66,18 +67,36 @@ def get_models(keyword):
      in_json = json.loads(f.read())
      result = in_json['models']
     
-     for i in in_json['models']:
-         print(i['display_name'])
-         response = requests.get(f"http://localhost/backend/previews/{i['model_name']}.jpg")
-         open(os.path.join(preview_location, i['model_name'] + ".jpg"), "wb").write(response.content)
+    #  for i in in_json['models']:
+    #      print(i['display_name'])
+    #      response = requests.get(f"http://localhost/backend/previews/{i['model_name']}.jpg")
+    #      open(os.path.join(preview_location, i['model_name'] + ".jpg"), "wb").write(response.content)
      # print(in_json['models'][0]['display_name'])
      return result
+
+def fill_disp_models(start,count,keyword):
+    global disp_models
+    disp_models = []
+    temp_search_array = []
+    if keyword != "":
+        for i in models:
+            if keyword in i['display_name']:
+                temp_search_array.append(i)
+    else:
+        temp_search_array = models
+
+    for i in range(start,start+count):
+        if i + 1 > len(temp_search_array):
+            break
+        response = requests.get(f"http://localhost/backend/previews/{temp_search_array[i]['model_name']}.jpg")
+        open(os.path.join(preview_location, temp_search_array[i]['model_name'] + ".jpg"), "wb").write(response.content)
+        disp_models.append(temp_search_array[i])
 
 def setup():
     global models
     
-    models = get_models("")
-    print(f"models: {models}")
+    models = get_models()
+    fill_disp_models(0,10,"")
 
     pcoll = bpy.utils.previews.new()
     images_location = preview_location
