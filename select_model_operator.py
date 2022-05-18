@@ -8,7 +8,7 @@ import qwick3d_importer
 
 class WM_OT_select_model(bpy.types.Operator):
     """"""
-    bl_label = "Qwick3d Asset Browser"
+    bl_label = "Qwick3d Asset Browser, (Downloads work in the background so you can close this alert anytime)"
     bl_idname = "wm.select_model"
 
     last_updated_search_query = ""
