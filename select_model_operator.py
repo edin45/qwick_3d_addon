@@ -24,8 +24,20 @@ class WM_OT_select_model(bpy.types.Operator):
     
     def invoke(self,context,event):
         #,width=1280
-        qwick3d_importer.setup()
-        return context.window_manager.invoke_props_dialog(self,width=800)
+        
+        user_preferences = bpy.context.preferences.addons['qwick3d_importer'].preferences
+
+        qwick3d_importer.preview_location = user_preferences.previews_path
+        qwick3d_importer.asset_location = user_preferences.asset_path
+        qwick3d_importer.license = user_preferences.license
+    
+        try:
+            qwick3d_importer.setup()
+            return context.window_manager.invoke_props_dialog(self,width=800)
+        except(FileNotFoundError):
+            self.report({'ERROR'}, "No Preview and / or Asset Path Found, go to the addon preferences and select them there")
+            return {'FINISHED'}
+        
 
     def check(self, context):
         props = context.scene.DonwloadInfoPropertyGroup
@@ -77,6 +89,7 @@ class WM_OT_select_model(bpy.types.Operator):
         pagination_row = layout.row()
         pagination_row.operator("wm.previous_page",text="Previous Page")
         pagination_row.operator("wm.next_page",text="Next Page")
+
 
 class WM_OT_previous_page(bpy.types.Operator):
     """"""

@@ -35,7 +35,7 @@ from . download_model_operator import WM_OT_download_model
 from . download_info_property import DonwloadInfoPropertyGroup
 from . preferences import Qwick3dAddonPreferences
 
-classes = (WM_OT_select_model,WM_OT_download_model,DonwloadInfoPropertyGroup,WM_OT_previous_page,WM_OT_next_page )
+classes = (WM_OT_select_model, WM_OT_download_model, DonwloadInfoPropertyGroup, WM_OT_previous_page, WM_OT_next_page)
 
 addon_keymaps = []
 preview_collections = {}
@@ -80,6 +80,7 @@ def get_models():
 
 def fill_disp_models(start,count,keyword):
     global disp_models,temp_search_array
+
     disp_models = []
     temp_search_array = []
     if keyword != "":
@@ -110,14 +111,8 @@ def setup():
 
 def register():
     global preview_location, asset_location, license
-
-    bpy.utils.register_class(Qwick3dAddonPreferences)
     
-    user_preferences = bpy.context.preferences.addons['qwick3d_importer'].preferences
-
-    preview_location = user_preferences.previews_path
-    asset_location = user_preferences.asset_path
-    license = user_preferences.license
+    bpy.utils.register_class(Qwick3dAddonPreferences)
 
     for c in classes:
         bpy.utils.register_class(c)
