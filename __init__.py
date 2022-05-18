@@ -33,8 +33,9 @@ from . select_model_operator import WM_OT_previous_page
 from . select_model_operator import WM_OT_next_page
 from . download_model_operator import WM_OT_download_model
 from . download_info_property import DonwloadInfoPropertyGroup
+from . preferences import Qwick3dAddonPreferences
 
-classes = (WM_OT_select_model,WM_OT_download_model,DonwloadInfoPropertyGroup,WM_OT_previous_page,WM_OT_next_page)
+classes = (WM_OT_select_model,WM_OT_download_model,DonwloadInfoPropertyGroup,WM_OT_previous_page,WM_OT_next_page )
 
 addon_keymaps = []
 preview_collections = {}
@@ -42,9 +43,9 @@ models = []
 disp_models = []
 temp_search_array = []
 
-asset_location = "/home/edin/blender/assets"
-preview_location = "/home/edin/blender/previews"
-license = "62815c6be654d"
+asset_location = ""
+preview_location = ""
+license = ""
 
 def generate_previews(images_location):
     # We are accessing all of the information that we generated in the register function below
@@ -108,7 +109,16 @@ def setup():
 
 
 def register():
+    global preview_location, asset_location, license
+
+    bpy.utils.register_class(Qwick3dAddonPreferences)
     
+    user_preferences = bpy.context.preferences.addons['qwick3d_importer'].preferences
+
+    preview_location = user_preferences.previews_path
+    asset_location = user_preferences.asset_path
+    license = user_preferences.license
+
     for c in classes:
         bpy.utils.register_class(c)
 
@@ -132,12 +142,14 @@ def unregister():
     del bpy.types.Scene.DonwloadInfoPropertyGroup
 
     # remove previews
-    bpy.utils.previews.remove()
+    # bpy.utils.previews.remove(pcoll=preview_collections["thumbnail_previews"])
 
     # Remove custom shortcuts
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)
     addon_keymaps.clear()
 
-if __name__ == "__main__":
-     setup()
+    bpy.utils.unregister_class(Qwick3dAddonPreferences)
+
+# if __name__ == "__main__":
+#      setup()
