@@ -1,8 +1,4 @@
 import bpy
-import os
-import json
-import urllib.request
-import requests
 import math
 import qwick3d_importer
 
@@ -32,9 +28,17 @@ class WM_OT_select_model(bpy.types.Operator):
         qwick3d_importer.license = user_preferences.license
     
         try:
+        
             qwick3d_importer.setup()
+            
+            if qwick3d_importer.license == '':
+                props = context.scene.DonwloadInfoPropertyGroup
+                props.res = '1k'
+
             return context.window_manager.invoke_props_dialog(self,width=800)
+        
         except(FileNotFoundError):
+
             self.report({'ERROR'}, "No Preview and / or Asset Path Found, go to the addon preferences and select them there")
             return {'FINISHED'}
         
@@ -60,6 +64,9 @@ class WM_OT_select_model(bpy.types.Operator):
 
         layout = self.layout
         
+        if qwick3d_importer.license == '':
+            layout.operator("wm.unlock_pro",text="Unlock Pro",icon="UNLOCKED")
+
         layout.prop(props, "res")
 
         layout.prop(props, "model_search")

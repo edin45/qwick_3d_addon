@@ -6,7 +6,7 @@ import _thread
 import time
 
 class WM_OT_download_model(bpy.types.Operator):
-    """"""
+    """Will download the Asset"""
     bl_label = "The Model is downloading, You can now close the alerts, The model will Auto-Import once the download is done."
     bl_idname = "wm.download_model"
     
@@ -20,6 +20,9 @@ class WM_OT_download_model(bpy.types.Operator):
 #        self.model_name = model_name
 
     def execute(self, context):
+        if qwick3d_importer.license == '' and bpy.context.scene.DonwloadInfoPropertyGroup.res != '1k':
+            self.report({'INFO'}, "Free users can't download higher Resolutions than 1k will download 1k")
+
         override = bpy.context.copy()
         _thread.start_new_thread( download_model, (self.model_name,override) )
         return {'FINISHED'}

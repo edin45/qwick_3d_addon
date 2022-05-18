@@ -34,8 +34,9 @@ from . select_model_operator import WM_OT_next_page
 from . download_model_operator import WM_OT_download_model
 from . download_info_property import DonwloadInfoPropertyGroup
 from . preferences import Qwick3dAddonPreferences
+from . unlock_pro import WM_OT_unlock_pro
 
-classes = (WM_OT_select_model, WM_OT_download_model, DonwloadInfoPropertyGroup, WM_OT_previous_page, WM_OT_next_page)
+classes = (WM_OT_select_model, WM_OT_download_model, DonwloadInfoPropertyGroup, WM_OT_previous_page, WM_OT_next_page, WM_OT_unlock_pro)
 
 addon_keymaps = []
 preview_collections = {}
