@@ -8,6 +8,7 @@ class DonwloadInfoPropertyGroup(bpy.types.PropertyGroup):
             ('1k','1K','1k'),
             ('2k','2K','2k'),
             ('4k','4K','4k'),
+            ('8k','8K','8k'),
         ],
         default='4k'
     )

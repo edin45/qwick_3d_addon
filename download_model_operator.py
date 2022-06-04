@@ -40,7 +40,7 @@ def download_model(model_name,override):
         
     bpy.ops.wm.append(
         override,
-        filepath=os.path.join(result_folder, 'Object', model_name),
+        filepath=os.path.join(result_folder, 'Object', model_name + "_" + props.res),
         directory=os.path.join(result_folder, 'Object'),
-        filename=model_name
+        filename=model_name + "_" + props.res
     )
