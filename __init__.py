@@ -16,7 +16,7 @@ bl_info = {
     "author" : "Edin Spiegel",
     "description" : "Importer for the Qwick3d asset library",
     "blender": (3, 0, 0),
-    "version" : (0, 0, 1),
+    "version" : (0, 0, 2),
     "location" : "View3D",
     "warning" : "",
     "category" : "Import-Export",
