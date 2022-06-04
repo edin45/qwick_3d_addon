@@ -4,6 +4,7 @@ import os
 import qwick3d_importer
 import _thread
 import time
+import platform
 
 class WM_OT_download_model(bpy.types.Operator):
     """Will download the Asset"""
@@ -34,7 +35,8 @@ def download_model(model_name,override):
     download_url = "http://localhost/backend" + f.read().decode("utf-8")
     print(download_url)
     response = qwick3d_importer.requests.get(download_url)
-        
+
+    #qwick3d_importer.asset_location + ("" if qwick3d_importer.asset_location[-1] == "/" or qwick3d_importer.asset_location[-1] == "\\" else ("/" if platform.system() == "Linux" else "\\")) + model_name + "_" + props.res + ".blend"
     result_folder = os.path.join(qwick3d_importer.asset_location, model_name + "_" + props.res + ".blend")
     open(result_folder, "wb").write(response.content)
         
